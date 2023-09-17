@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Web.WebView2.Core;
-using Newtonsoft.Json;
-using static System.Net.Mime.MediaTypeNames;
 using WebView2 = Microsoft.Web.WebView2.WinForms.WebView2;
 
 namespace BackBone
@@ -25,11 +18,26 @@ namespace BackBone
         }
         [DllImport("user32.dll")]
         public static extern bool GetAsyncKeyState(System.Windows.Forms.Keys vKey);
+        [System.Runtime.InteropServices.DllImport("User32", EntryPoint = "FindWindow")]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern int GetWindowRgn(IntPtr hWnd, IntPtr hRgn);
+        [DllImport("gdi32.dll")]
+        static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool GetWindowRect(IntPtr hwnd, out Rectangle lpRect);
         public static int x, y;
         public WebView2 webView21 = new WebView2();
         private static int width = Screen.PrimaryScreen.Bounds.Width;
         private static int height = Screen.PrimaryScreen.Bounds.Height;
         private static string type, windowtitle, base64image;
+        private static IntPtr findwindow;
+        private static uint PW_CLIENTONLY = 0x1;
+        private static uint PW_RENDERFULLCONTENT = 0x2;
+        private static uint flags = PW_CLIENTONLY | PW_RENDERFULLCONTENT;
         public static int[] wd = { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
         public static int[] wu = { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
         public static bool[] ws = { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
@@ -55,8 +63,8 @@ namespace BackBone
         }
         private async void Form1_Shown(object sender, EventArgs e)
         {
-            this.Size = new Size(width, height);
-            this.Location = new Point(0, 0);
+            this.Size = new System.Drawing.Size(width, height);
+            this.Location = new System.Drawing.Point(0, 0);
             CoreWebView2EnvironmentOptions options = new CoreWebView2EnvironmentOptions("--disable-web-security", "--allow-file-access-from-files", "--allow-file-access");
             CoreWebView2Environment environment = await CoreWebView2Environment.CreateAsync(null, null, options);
             await webView21.EnsureCoreWebView2Async(environment);
@@ -73,17 +81,53 @@ namespace BackBone
                 file.ReadLine();
                 windowtitle = file.ReadLine();
             }
+            findwindow = FindWindow(null, windowtitle);
         }
         private async void timer1_Tick(object sender, EventArgs e)
         {
             try
             {
-                Bitmap bmp = new Bitmap("backbone.gif");
+                Bitmap bmp = PrintWindow(findwindow);
+                if (type == "1")
+                {
+                    bmp = new Bitmap(bmp, new Size(bmp.Width / 4, bmp.Height / 4));
+                }
+                if (type == "2")
+                {
+                    bmp = ImageToGrayScale(bmp);
+                }
                 byte[] imageArray = ImageToByteArray(bmp, ImageFormat.Bmp);
                 base64image = Convert.ToBase64String(imageArray);
                 await execScriptHelper($"setBackground('{base64image.ToString()}');");
             }
             catch { }
+        }
+        public static Bitmap PrintWindow(IntPtr hwnd)
+        {
+            Rectangle rc;
+            GetWindowRect(hwnd, out rc);
+            Bitmap bmp = new Bitmap(rc.Width, rc.Height, PixelFormat.Format32bppArgb);
+            Graphics gfxBmp = Graphics.FromImage(bmp);
+            IntPtr hdcBitmap = gfxBmp.GetHdc();
+            PrintWindow(hwnd, hdcBitmap, PW_CLIENTONLY | PW_RENDERFULLCONTENT);
+            gfxBmp.ReleaseHdc(hdcBitmap);
+            gfxBmp.Dispose();
+            return bmp;
+        }
+        public static Bitmap ImageToGrayScale(Bitmap Bmp)
+        {
+            int rgb;
+            Color c;
+            for (int y = 0; y < Bmp.Height; y++)
+            {
+                for (int x = 0; x < Bmp.Width; x++)
+                {
+                    c = Bmp.GetPixel(x, y);
+                    rgb = (int)Math.Round(.299 * c.R + .587 * c.G + .114 * c.B);
+                    Bmp.SetPixel(x, y, Color.FromArgb(rgb, rgb, rgb));
+                }
+            }
+            return Bmp;
         }
         public static byte[] ImageToByteArray(Bitmap image, ImageFormat format)
         {
