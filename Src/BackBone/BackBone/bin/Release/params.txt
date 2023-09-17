@@ -1,0 +1,4 @@
+// 1: pixel art, 2: grayscale
+2
+// Window title
+Playcipe
