@@ -2,9 +2,11 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.SqlServer.Server;
 using Microsoft.Web.WebView2.Core;
 using WebView2 = Microsoft.Web.WebView2.WinForms.WebView2;
 
@@ -52,6 +54,8 @@ namespace BackBone
         private Graphics gfxBmp;
         private IntPtr hdcBitmap;
         private Bitmap bitmap;
+        private ImageCodecInfo jpegEncoder;
+        private EncoderParameters encoderParameters;
         private async void Form1_Shown(object sender, EventArgs e)
         {
             TimeBeginPeriod(1);
@@ -74,25 +78,20 @@ namespace BackBone
                 file.ReadLine();
                 windowtitle = file.ReadLine();
             }
+            jpegEncoder = ImageCodecInfo.GetImageDecoders().First(c => c.FormatID == ImageFormat.Jpeg.Guid);
+            encoderParameters = new EncoderParameters(1);
+            encoderParameters.Param[0] = new EncoderParameter(Encoder.Compression, 255);
             findwindow = FindWindow(null, windowtitle);
             GetWindowRect(findwindow, out rc);
             bmp = new Bitmap(rc.Width, rc.Height, PixelFormat.Format32bppArgb);
             gfxBmp = Graphics.FromImage(bmp);
-            Task.Run(() => Start());
-        }
-        private async void Start()
-        {
-            while (!closed)
-            {
-                System.Threading.Thread.Sleep(1);
-            }
         }
         private async void timer1_Tick(object sender, EventArgs e)
         {
             try
             {
                 bitmap = PrintWindow(findwindow);
-                bitmap = new Bitmap(bitmap, new Size(bitmap.Width / 3, bitmap.Height / 3));
+                bitmap = new Bitmap(bitmap, new Size(bitmap.Width / 2, bitmap.Height / 2));
                 if (type == "1")
                 {
                     bitmap = new Bitmap(bitmap, new Size(bitmap.Width / 2, bitmap.Height / 2));
@@ -101,7 +100,7 @@ namespace BackBone
                 {
                     bitmap = ImageToGrayScale(bitmap);
                 }
-                byte[] imageArray = ImageToByteArray(bitmap, ImageFormat.Bmp);
+                byte[] imageArray = ImageToByteArray(bitmap);
                 base64image = Convert.ToBase64String(imageArray);
                 await execScriptHelper($"setBackground('{base64image.ToString()}');");
             }
@@ -129,11 +128,11 @@ namespace BackBone
             }
             return Bmp;
         }
-        public static byte[] ImageToByteArray(Bitmap image, ImageFormat format)
+        public byte[] ImageToByteArray(Bitmap image)
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                image.Save(ms, format);
+                image.Save(ms, jpegEncoder, encoderParameters);
                 return ms.ToArray();
             }
         }
