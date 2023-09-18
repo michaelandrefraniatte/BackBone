@@ -29,40 +29,33 @@ namespace BackBone
         static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool GetWindowRect(IntPtr hwnd, out Rectangle lpRect);
+
+        [DllImport("winmm.dll", EntryPoint = "timeBeginPeriod")]
+        public static extern uint TimeBeginPeriod(uint ms);
+        [DllImport("winmm.dll", EntryPoint = "timeEndPeriod")]
+        public static extern uint TimeEndPeriod(uint ms);
+        [DllImport("ntdll.dll", EntryPoint = "NtSetTimerResolution")]
+        public static extern void NtSetTimerResolution(uint DesiredResolution, bool SetResolution, ref uint CurrentResolution);
+        public static uint CurrentResolution = 0;
         public static int x, y;
         public WebView2 webView21 = new WebView2();
         private static int width = Screen.PrimaryScreen.Bounds.Width;
         private static int height = Screen.PrimaryScreen.Bounds.Height;
         private static string type, windowtitle, base64image;
         private static IntPtr findwindow;
+        private static bool closed = false;
         private static uint PW_CLIENTONLY = 0x1;
         private static uint PW_RENDERFULLCONTENT = 0x2;
         private static uint flags = PW_CLIENTONLY | PW_RENDERFULLCONTENT;
-        public static int[] wd = { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
-        public static int[] wu = { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
-        public static bool[] ws = { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
-        static void valchanged(int n, bool val)
-        {
-            if (val)
-            {
-                if (wd[n] <= 1)
-                {
-                    wd[n] = wd[n] + 1;
-                }
-                wu[n] = 0;
-            }
-            else
-            {
-                if (wu[n] <= 1)
-                {
-                    wu[n] = wu[n] + 1;
-                }
-                wd[n] = 0;
-            }
-            ws[n] = val;
-        }
+        private Rectangle rc;
+        private Bitmap bmp;
+        private Graphics gfxBmp;
+        private IntPtr hdcBitmap;
+        private Bitmap bitmap;
         private async void Form1_Shown(object sender, EventArgs e)
         {
+            TimeBeginPeriod(1);
+            NtSetTimerResolution(1, true, ref CurrentResolution);
             this.Size = new System.Drawing.Size(width, height);
             this.Location = new System.Drawing.Point(0, 0);
             CoreWebView2EnvironmentOptions options = new CoreWebView2EnvironmentOptions("--disable-web-security", "--allow-file-access-from-files", "--allow-file-access");
@@ -82,36 +75,43 @@ namespace BackBone
                 windowtitle = file.ReadLine();
             }
             findwindow = FindWindow(null, windowtitle);
+            GetWindowRect(findwindow, out rc);
+            bmp = new Bitmap(rc.Width, rc.Height, PixelFormat.Format32bppArgb);
+            gfxBmp = Graphics.FromImage(bmp);
+            Task.Run(() => Start());
+        }
+        private async void Start()
+        {
+            while (!closed)
+            {
+                System.Threading.Thread.Sleep(1);
+            }
         }
         private async void timer1_Tick(object sender, EventArgs e)
         {
             try
             {
-                Bitmap bmp = PrintWindow(findwindow);
+                bitmap = PrintWindow(findwindow);
+                bitmap = new Bitmap(bitmap, new Size(bitmap.Width / 3, bitmap.Height / 3));
                 if (type == "1")
                 {
-                    bmp = new Bitmap(bmp, new Size(bmp.Width / 4, bmp.Height / 4));
+                    bitmap = new Bitmap(bitmap, new Size(bitmap.Width / 2, bitmap.Height / 2));
                 }
                 if (type == "2")
                 {
-                    bmp = ImageToGrayScale(bmp);
+                    bitmap = ImageToGrayScale(bitmap);
                 }
-                byte[] imageArray = ImageToByteArray(bmp, ImageFormat.Bmp);
+                byte[] imageArray = ImageToByteArray(bitmap, ImageFormat.Bmp);
                 base64image = Convert.ToBase64String(imageArray);
                 await execScriptHelper($"setBackground('{base64image.ToString()}');");
             }
             catch { }
         }
-        public static Bitmap PrintWindow(IntPtr hwnd)
+        public Bitmap PrintWindow(IntPtr hwnd)
         {
-            Rectangle rc;
-            GetWindowRect(hwnd, out rc);
-            Bitmap bmp = new Bitmap(rc.Width, rc.Height, PixelFormat.Format32bppArgb);
-            Graphics gfxBmp = Graphics.FromImage(bmp);
-            IntPtr hdcBitmap = gfxBmp.GetHdc();
+            hdcBitmap = gfxBmp.GetHdc();
             PrintWindow(hwnd, hdcBitmap, PW_CLIENTONLY | PW_RENDERFULLCONTENT);
             gfxBmp.ReleaseHdc(hdcBitmap);
-            gfxBmp.Dispose();
             return bmp;
         }
         public static Bitmap ImageToGrayScale(Bitmap Bmp)
@@ -144,6 +144,8 @@ namespace BackBone
         }
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
+            closed = true;
+            gfxBmp.Dispose();
         }
     }
 }
