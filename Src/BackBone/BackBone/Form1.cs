@@ -91,7 +91,7 @@ namespace BackBone
             try
             {
                 bitmap = PrintWindow(findwindow);
-                bitmap = new Bitmap(bitmap, new Size(bitmap.Width / 2, bitmap.Height / 2));
+                bitmap = new Bitmap(bitmap, new Size(bitmap.Width / 4, bitmap.Height / 4));
                 if (type == "1")
                 {
                     bitmap = new Bitmap(bitmap, new Size(bitmap.Width / 2, bitmap.Height / 2));
