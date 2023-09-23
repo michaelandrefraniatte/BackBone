@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
 using SharpDX;
 using SharpDX.Direct2D1;
-using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using AlphaMode = SharpDX.Direct2D1.AlphaMode;
 using Device = SharpDX.Direct3D11.Device;
@@ -18,7 +13,7 @@ using MapFlags = SharpDX.Direct3D11.MapFlags;
 using Rectangle = System.Drawing.Rectangle;
 using Bitmap = System.Drawing.Bitmap;
 using System.Runtime.InteropServices;
-using System.Drawing.Drawing2D;
+using System.Threading;
 
 namespace BackBone
 {
@@ -41,7 +36,6 @@ namespace BackBone
         static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool GetWindowRect(IntPtr hwnd, out Rectangle lpRect);
-
         [DllImport("winmm.dll", EntryPoint = "timeBeginPeriod")]
         public static extern uint TimeBeginPeriod(uint ms);
         [DllImport("winmm.dll", EntryPoint = "timeEndPeriod")]
@@ -63,8 +57,6 @@ namespace BackBone
         private Graphics gfxBmp;
         private IntPtr hdcBitmap;
         private Bitmap bitmap;
-        private ImageCodecInfo jpegEncoder;
-        private EncoderParameters encoderParameters;
         private static WindowRenderTarget target;
         private static SharpDX.Direct2D1.Factory1 fact = new SharpDX.Direct2D1.Factory1();
         private static RenderTargetProperties renderProp;
@@ -82,14 +74,12 @@ namespace BackBone
                 file.ReadLine();
                 windowtitle = file.ReadLine();
             }
-            jpegEncoder = ImageCodecInfo.GetImageDecoders().First(c => c.FormatID == ImageFormat.Jpeg.Guid);
-            encoderParameters = new EncoderParameters(1);
-            encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Compression, 255);
             findwindow = FindWindow(null, windowtitle);
             GetWindowRect(findwindow, out rc);
             bmp = new Bitmap(rc.Width, rc.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             gfxBmp = Graphics.FromImage(bmp);
             InitDisplayCapture(this.pictureBox1.Handle);
+            Task.Run(() => Start());
         }
         private static void InitDisplayCapture(IntPtr handle)
         {
@@ -128,24 +118,28 @@ namespace BackBone
                 target.EndDraw();
             }
         }
-        private void timer1_Tick(object sender, EventArgs e)
+        private void Start()
         {
-            try
+            while (!closed)
             {
-                bitmap = PrintWindow(findwindow);
-                if (type == "1")
+                try
                 {
-                    bitmap = new Bitmap(bitmap, new Size(width / 4, height / 4));
+                    bitmap = PrintWindow(findwindow);
+                    if (type == "1")
+                    {
+                        bitmap = new Bitmap(bitmap, new Size(width / 4, height / 4));
+                    }
+                    if (type == "2")
+                    {
+                        bitmap = new Bitmap(bitmap, new Size(width / 3, height / 3));
+                        bitmap = ImageToGrayScale(bitmap);
+                    }
+                    bitmap = new Bitmap(bitmap, new Size(width, height));
+                    DisplayCapture(bitmap);
                 }
-                if (type == "2")
-                {
-                    bitmap = new Bitmap(bitmap, new Size(width / 3, height / 3));
-                    bitmap = ImageToGrayScale(bitmap);
-                }
-                bitmap = new Bitmap(bitmap, new Size(width, height));
-                DisplayCapture(bitmap);
+                catch { }
+                Thread.Sleep(1);
             }
-            catch { }
         }
         public Bitmap PrintWindow(IntPtr hwnd)
         {
