@@ -14,6 +14,10 @@ using Rectangle = System.Drawing.Rectangle;
 using Bitmap = System.Drawing.Bitmap;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Text;
 
 namespace BackBone
 {
@@ -131,7 +135,6 @@ namespace BackBone
                     }
                     if (type == "2")
                     {
-                        bitmap = new Bitmap(bitmap, new Size(width / 3, height / 3));
                         bitmap = ImageToGrayScale(bitmap);
                     }
                     bitmap = new Bitmap(bitmap, new Size(width, height));
@@ -150,18 +153,22 @@ namespace BackBone
         }
         public static Bitmap ImageToGrayScale(Bitmap Bmp)
         {
-            int rgb;
-            Color c;
-            for (int y = 0; y < Bmp.Height; y++)
-            {
-                for (int x = 0; x < Bmp.Width; x++)
-                {
-                    c = Bmp.GetPixel(x, y);
-                    rgb = (int)Math.Round(.299 * c.R + .587 * c.G + .114 * c.B);
-                    Bmp.SetPixel(x, y, Color.FromArgb(rgb, rgb, rgb));
-                }
-            }
-            return Bmp;
+            Bitmap newBitmap = new Bitmap(Bmp.Width, Bmp.Height);
+            Graphics g = Graphics.FromImage(newBitmap);
+            ColorMatrix colorMatrix = new ColorMatrix(
+               new float[][]
+              {
+                 new float[] {.3f, .3f, .3f, 0, 0},
+                 new float[] {.59f, .59f, .59f, 0, 0},
+                 new float[] {.11f, .11f, .11f, 0, 0},
+                 new float[] {0, 0, 0, 1, 0},
+                 new float[] {0, 0, 0, 0, 1}
+              });
+            ImageAttributes attributes = new ImageAttributes();
+            attributes.SetColorMatrix(colorMatrix);
+            g.DrawImage(Bmp, new Rectangle(0, 0, Bmp.Width, Bmp.Height), 0, 0, Bmp.Width, Bmp.Height, GraphicsUnit.Pixel, attributes);
+            g.Dispose();
+            return newBitmap;
         }
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {

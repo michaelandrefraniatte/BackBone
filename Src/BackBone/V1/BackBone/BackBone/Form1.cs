@@ -31,7 +31,6 @@ namespace BackBone
         static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool GetWindowRect(IntPtr hwnd, out Rectangle lpRect);
-
         [DllImport("winmm.dll", EntryPoint = "timeBeginPeriod")]
         public static extern uint TimeBeginPeriod(uint ms);
         [DllImport("winmm.dll", EntryPoint = "timeEndPeriod")]
@@ -91,10 +90,9 @@ namespace BackBone
             try
             {
                 bitmap = PrintWindow(findwindow);
-                bitmap = new Bitmap(bitmap, new Size(bitmap.Width / 3, bitmap.Height / 3));
                 if (type == "1")
                 {
-                    bitmap = new Bitmap(bitmap, new Size(bitmap.Width / 2, bitmap.Height / 2));
+                    bitmap = new Bitmap(bitmap, new Size(bitmap.Width / 4, bitmap.Height / 4));
                 }
                 if (type == "2")
                 {
@@ -115,18 +113,22 @@ namespace BackBone
         }
         public static Bitmap ImageToGrayScale(Bitmap Bmp)
         {
-            int rgb;
-            Color c;
-            for (int y = 0; y < Bmp.Height; y++)
-            {
-                for (int x = 0; x < Bmp.Width; x++)
-                {
-                    c = Bmp.GetPixel(x, y);
-                    rgb = (int)Math.Round(.299 * c.R + .587 * c.G + .114 * c.B);
-                    Bmp.SetPixel(x, y, Color.FromArgb(rgb, rgb, rgb));
-                }
-            }
-            return Bmp;
+            Bitmap newBitmap = new Bitmap(Bmp.Width, Bmp.Height);
+            Graphics g = Graphics.FromImage(newBitmap);
+            ColorMatrix colorMatrix = new ColorMatrix(
+               new float[][]
+              {
+                 new float[] {.3f, .3f, .3f, 0, 0},
+                 new float[] {.59f, .59f, .59f, 0, 0},
+                 new float[] {.11f, .11f, .11f, 0, 0},
+                 new float[] {0, 0, 0, 1, 0},
+                 new float[] {0, 0, 0, 0, 1}
+              });
+            ImageAttributes attributes = new ImageAttributes();
+            attributes.SetColorMatrix(colorMatrix);
+            g.DrawImage(Bmp, new Rectangle(0, 0, Bmp.Width, Bmp.Height), 0, 0, Bmp.Width, Bmp.Height, GraphicsUnit.Pixel, attributes);
+            g.Dispose();
+            return newBitmap;
         }
         public byte[] ImageToByteArray(Bitmap image)
         {
