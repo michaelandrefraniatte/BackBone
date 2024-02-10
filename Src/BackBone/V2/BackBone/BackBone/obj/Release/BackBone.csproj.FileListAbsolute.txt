@@ -28,7 +28,6 @@ C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\bin\R
 C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\bin\Release\BackBone.exe
 C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\bin\Release\BackBone.pdb
 C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\obj\Release\BackBone.csproj.AssemblyReference.cache
-C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\obj\Release\BackBone.csproj.SuggestedBindingRedirects.cache
 C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\obj\Release\BackBone.Form1.resources
 C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\obj\Release\BackBone.Properties.Resources.resources
 C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\obj\Release\BackBone.csproj.GenerateResource.cache

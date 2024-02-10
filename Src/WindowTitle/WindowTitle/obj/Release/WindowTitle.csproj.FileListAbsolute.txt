@@ -2,7 +2,6 @@ C:\Users\micha\Documents\github\WindowTitle\Src\WindowTitle\WindowTitle\bin\Rele
 C:\Users\micha\Documents\github\WindowTitle\Src\WindowTitle\WindowTitle\bin\Release\WindowTitle.exe
 C:\Users\micha\Documents\github\WindowTitle\Src\WindowTitle\WindowTitle\bin\Release\WindowTitle.pdb
 C:\Users\micha\Documents\github\WindowTitle\Src\WindowTitle\WindowTitle\obj\Release\WindowTitle.csproj.AssemblyReference.cache
-C:\Users\micha\Documents\github\WindowTitle\Src\WindowTitle\WindowTitle\obj\Release\WindowTitle.csproj.SuggestedBindingRedirects.cache
 C:\Users\micha\Documents\github\WindowTitle\Src\WindowTitle\WindowTitle\obj\Release\WindowTitle.Form1.resources
 C:\Users\micha\Documents\github\WindowTitle\Src\WindowTitle\WindowTitle\obj\Release\WindowTitle.Properties.Resources.resources
 C:\Users\micha\Documents\github\WindowTitle\Src\WindowTitle\WindowTitle\obj\Release\WindowTitle.csproj.GenerateResource.cache

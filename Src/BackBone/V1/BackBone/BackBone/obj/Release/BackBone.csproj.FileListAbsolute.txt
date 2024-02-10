@@ -37,3 +37,15 @@ C:\Users\micha\Documents\tool\BackBone\V1\BackBone\BackBone\obj\Release\BackBone
 C:\Users\micha\Documents\tool\BackBone\V1\BackBone\BackBone\obj\Release\BackBone.csproj.CopyComplete
 C:\Users\micha\Documents\tool\BackBone\V1\BackBone\BackBone\obj\Release\BackBone.exe
 C:\Users\micha\Documents\tool\BackBone\V1\BackBone\BackBone\obj\Release\BackBone.pdb
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\bin\Release\BackBone.exe.config
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\bin\Release\BackBone.exe
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\bin\Release\BackBone.pdb
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\bin\Release\Newtonsoft.Json.xml
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\obj\Release\BackBone.csproj.AssemblyReference.cache
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\obj\Release\BackBone.Form1.resources
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\obj\Release\BackBone.Properties.Resources.resources
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\obj\Release\BackBone.csproj.GenerateResource.cache
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\obj\Release\BackBone.csproj.CoreCompileInputs.cache
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\obj\Release\BackBone.csproj.CopyComplete
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\obj\Release\BackBone.exe
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\obj\Release\BackBone.pdb
