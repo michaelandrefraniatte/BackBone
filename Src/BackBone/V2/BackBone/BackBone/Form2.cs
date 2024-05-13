@@ -11,6 +11,7 @@ namespace PromptHandle
         {
             InitializeComponent();
         }
+        private static Form2 prompt = new Form2();
         private void Form2_Load(object sender, EventArgs e)
         {
         }
@@ -18,7 +19,7 @@ namespace PromptHandle
         {
             OnKeyDown(e.KeyData);
         }
-        static void OnKeyDown(Keys keyData)
+        private static void OnKeyDown(Keys keyData)
         {
             if (keyData == Keys.F1)
             {
@@ -31,22 +32,17 @@ namespace PromptHandle
         {
             return await Task.Run(() =>
             {
-                Form2 prompt = new Form2();
                 prompt.Width = 360;
                 prompt.Height = 140;
                 prompt.Text = caption;
-                Label textLabel = new Label() { Left = 16, Top = 20, Width = 340, Text = text };
-                ComboBox cmbx = new ComboBox() { Left = 120, Top = 44, Width = 200, Text = record };
+                Label textLabel = new Label() { Left = 16, Top = 20, Width = 316, Text = text };
+                ComboBox cmbx = new ComboBox() { Left = 16, Top = 44, Width = 316, Text = record };
                 foreach (string listrecord in listrecords)
                 {
                     cmbx.Items.Add(listrecord);
                 }
-                Button confirmation = new Button() { Text = "Confirm!", Left = 16, Width = 100, Top = 44, TabIndex = 1, TabStop = true };
-                confirmation.Click += (sender, e) => { prompt.Close(); };
                 prompt.Controls.Add(textLabel);
                 prompt.Controls.Add(cmbx);
-                prompt.Controls.Add(confirmation);
-                prompt.AcceptButton = confirmation;
                 prompt.StartPosition = FormStartPosition.CenterScreen;
                 prompt.ShowDialog();
                 return string.Format(cmbx.Text);
