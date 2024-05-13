@@ -6,9 +6,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.SqlServer.Server;
 using Microsoft.Web.WebView2.Core;
 using WebView2 = Microsoft.Web.WebView2.WinForms.WebView2;
+using PromptHandle;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace BackBone
 {
@@ -78,6 +80,10 @@ namespace BackBone
                 file.ReadLine();
                 windowtitle = file.ReadLine();
             }
+            List<string> listrecords = new List<string>();
+            listrecords = GetWindowTitles();
+            string record = windowtitle;
+            windowtitle = await Form2.ShowDialog("Window Titles", "What should be the window to handle capture?", record, listrecords);
             jpegEncoder = ImageCodecInfo.GetImageDecoders().First(c => c.FormatID == ImageFormat.Jpeg.Guid);
             encoderParameters = new EncoderParameters(1);
             encoderParameters.Param[0] = new EncoderParameter(Encoder.Compression, 255);
@@ -85,6 +91,17 @@ namespace BackBone
             GetWindowRect(findwindow, out rc);
             bmp = new Bitmap(rc.Width, rc.Height, PixelFormat.Format32bppArgb);
             gfxBmp = Graphics.FromImage(bmp);
+        }
+        public List<string> GetWindowTitles()
+        {
+            List<string> titles = new List<string>();
+            foreach (Process proc in Process.GetProcesses())
+            {
+                string title = proc.MainWindowTitle;
+                if (title != null & title != "")
+                    titles.Add(title);
+            }
+            return titles;
         }
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -170,6 +187,13 @@ namespace BackBone
         {
             closed = true;
             gfxBmp.Dispose();
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter("params.txt"))
+            {
+                file.WriteLine("// 1: pixel art, 2: grayscale");
+                file.WriteLine(type);
+                file.WriteLine("// Window title");
+                file.WriteLine(windowtitle);
+            }
         }
     }
 }

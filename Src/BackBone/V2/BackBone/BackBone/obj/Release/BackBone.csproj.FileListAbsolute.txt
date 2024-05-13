@@ -34,7 +34,6 @@ C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\obj\R
 C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\obj\Release\BackBone.csproj.CoreCompileInputs.cache
 C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\obj\Release\BackBone.exe
 C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\obj\Release\BackBone.pdb
-C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\obj\Release\BackBone.csproj.CopyComplete
 C:\Users\micha\Documents\tool\BackBone\V2\BackBone\BackBone\bin\Release\BackBone.exe.config
 C:\Users\micha\Documents\tool\BackBone\V2\BackBone\BackBone\bin\Release\BackBone.exe
 C:\Users\micha\Documents\tool\BackBone\V2\BackBone\BackBone\bin\Release\BackBone.pdb
@@ -47,3 +46,5 @@ C:\Users\micha\Documents\tool\BackBone\V2\BackBone\BackBone\obj\Release\BackBone
 C:\Users\micha\Documents\tool\BackBone\V2\BackBone\BackBone\obj\Release\BackBone.csproj.CopyComplete
 C:\Users\micha\Documents\tool\BackBone\V2\BackBone\BackBone\obj\Release\BackBone.exe
 C:\Users\micha\Documents\tool\BackBone\V2\BackBone\BackBone\obj\Release\BackBone.pdb
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\obj\Release\PromptHandle.Form2.resources
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V2\BackBone\BackBone\obj\Release\BackBone.csproj.Up2Date

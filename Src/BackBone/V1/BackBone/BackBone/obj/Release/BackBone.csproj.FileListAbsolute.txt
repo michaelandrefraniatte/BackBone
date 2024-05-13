@@ -58,3 +58,4 @@ C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\bin\R
 C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\bin\Release\Microsoft.Web.WebView2.WinForms.xml
 C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\bin\Release\Microsoft.Web.WebView2.Wpf.xml
 C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\obj\Release\BackBone.csproj.Up2Date
+C:\Users\micha\Documents\github\BackBone\Src\BackBone\V1\BackBone\BackBone\obj\Release\PromptHandle.Form2.resources
