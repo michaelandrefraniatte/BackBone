@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -36,17 +37,39 @@ namespace PromptHandle
                 prompt.Height = 140;
                 prompt.Text = caption;
                 Label textLabel = new Label() { Left = 16, Top = 20, Width = 316, Text = text };
-                ComboBox cmbx = new ComboBox() { Left = 16, Top = 44, Width = 316, Text = record };
+                ComboBox cmbx = new ComboBox() { Left = 16, Top = 44, Width = 256, Text = record };
                 foreach (string listrecord in listrecords)
                 {
                     cmbx.Items.Add(listrecord);
                 }
+                Button btn = new Button() { Left = 282, Top = 43, Width = 50, Text = "Reload" };
+                btn.Click += (sender, e) =>
+                {
+                    cmbx.Items.Clear();
+                    listrecords = GetWindowTitles();
+                    foreach (string listrecord in listrecords)
+                    {
+                        cmbx.Items.Add(listrecord);
+                    }
+                };
                 prompt.Controls.Add(textLabel);
                 prompt.Controls.Add(cmbx);
+                prompt.Controls.Add(btn);
                 prompt.StartPosition = FormStartPosition.CenterScreen;
                 prompt.ShowDialog();
                 return string.Format(cmbx.Text);
             });
+        }
+        public static List<string> GetWindowTitles()
+        {
+            List<string> titles = new List<string>();
+            foreach (Process proc in Process.GetProcesses())
+            {
+                string title = proc.MainWindowTitle;
+                if (title != null & title != "")
+                    titles.Add(title);
+            }
+            return titles;
         }
     }
 }
